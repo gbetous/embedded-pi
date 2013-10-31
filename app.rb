@@ -2,17 +2,19 @@ require 'eventmachine'
 require 'sinatra/base'
 require 'thin'
 
-require './site'
 
 # This example shows you how to embed Sinatra into your EventMachine
 # application. This is very useful if you're application needs some
 # sort of API interface and you don't want to use EM's provided
 # web-server.
 
-module Embedded
+require './site'
 
-$spawned_process = EM.spawn do |param|
+$count_event = 0
+
+Event_proc = EM.spawn do |param|
   puts "Received notify from #{param}"
+  $count_event = $count_event +1
 end
 
  
@@ -43,13 +45,12 @@ def self.run(opts)
     })
 
    EM.add_periodic_timer(10) do
-      $spawned_process.notify "periodic"
+      Event_proc.notify "periodic"
    end
 
   end
 
 end
 
-run app: HelloApp.new
-
-end
+hello = HelloApp.new
+run app: hello 

@@ -5,11 +5,11 @@ class HelloApp < Sinatra::Base
   end
 
   get '/' do
-    erb "Welcome !<br><a href='/event'>Send event</a>" 
+    erb "Welcome !<br><a href='/event'>Send event</a>(event number : <%=$count_event%>)" 
   end
 
   get '/event' do
-    $spawned_process.notify "website"
+    Event_proc.notify "website"
     redirect to('/')
   end
 end
