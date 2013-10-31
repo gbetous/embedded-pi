@@ -1,3 +1,5 @@
+require 'sinatra/base'
+
 class HelloApp < Sinatra::Base
   configure do
     set :bind, '0.0.0.0'
@@ -5,11 +7,11 @@ class HelloApp < Sinatra::Base
   end
 
   get '/' do
-    erb "Welcome !<br><a href='/event'>Send event</a>(event number : <%=$count_event%>)" 
+    erb "Welcome !<br><a href='/event'>Send event</a>(event number : <%=EmbeddedApp.count_event%>)" 
   end
 
   get '/event' do
-    Event_proc.notify "website"
+    EmbeddedApp.event_proc.notify "website"
     redirect to('/')
   end
 end

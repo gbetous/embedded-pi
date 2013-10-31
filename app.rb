@@ -1,5 +1,4 @@
 require 'eventmachine'
-require 'sinatra/base'
 require 'thin'
 
 
@@ -10,11 +9,19 @@ require 'thin'
 
 require './site'
 
-$count_event = 0
+module EmbeddedApp
 
-Event_proc = EM.spawn do |param|
-  puts "Received notify from #{param}"
-  $count_event = $count_event +1
+@@count_event = 0
+
+def self.count_event
+  @@count_event
+end
+
+def self.event_proc
+  @event_proc ||= EM.spawn do |param|
+    puts "Received notify from #{param}"
+    @@count_event = @@count_event +1
+  end
 end
 
  
@@ -45,12 +52,12 @@ def self.run(opts)
     })
 
    EM.add_periodic_timer(10) do
-      Event_proc.notify "periodic"
+      EmbeddedApp.event_proc.notify "periodic"
    end
 
   end
 
 end
 
-hello = HelloApp.new
-run app: hello 
+run app: HelloApp.new 
+end
